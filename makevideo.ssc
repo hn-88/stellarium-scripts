@@ -1,0 +1,89 @@
+// from https://beltoforion.de/en/stellarium_video/
+// marked as public domain
+
+// Author: Ingo Berg
+// Version: 1.0
+// License: Public Domain
+
+param_az = 90
+param_alt = 25
+param_lat = 50.911944
+param_long = 13.34277
+param_title = "Look at all the Stars!"
+param_date = "2018-09-25T18:02:22"
+param_timespan = 2.0
+param_fov = 70
+param_dt=30
+
+// Parameter Description
+//param_lat	The latitude of the observation location
+//param_long	The longitude of the observation location
+//param_title	The title of the animation
+//param_date	The day and time of the simulation. Must be in the format: "2018-09-25T18:02:22"
+//param_timespan	The total time span of the simulation in hours
+//param_fov	The field of view in degrees
+//param_dt	Simulated time difference between two successive frames in seconds
+
+
+function makeVideo(date, file_prefix, caption, hours, long, lat, alt, azi)
+{
+    core.setDate(date, "utc");
+    core.setObserverLocation(long, lat, 425, 1, "Freiberg", "Earth");
+    core.wait(0.5);
+
+    core.moveToAltAzi(alt, azi)
+    core.wait(0.5);
+
+    label = LabelMgr.labelScreen(caption, 70, 40, false, 40, "#aa0000");
+    LabelMgr.setLabelShow(label, true);
+
+    labelTime = LabelMgr.labelScreen("", 70, 90, false, 25, "#aa0000");
+    LabelMgr.setLabelShow(labelTime, true);
+
+    core.wait(0.5);
+
+    max_sec = hours * 60 * 60
+    for (var sec = 0; sec < max_sec; sec += param_dt) {
+        core.setDate('+' + param_dt + ' seconds');
+        LabelMgr.setLabelText(labelTime, core.getDate(""));
+        core.wait(0.1);
+        core.screenshot(file_prefix);
+    }
+
+    LabelMgr.deleteAllLabels();
+}
+
+core.setTimeRate(0); 
+core.setGuiVisible(false);
+core.setMilkyWayVisible(true);
+core.setMilkyWayIntensity(4);
+
+SolarSystem.setFlagPlanets(true);
+SolarSystem.setMoonScale(6);
+SolarSystem.setFlagMoonScale(true);
+SolarSystem.setFontSize(25);
+    
+StelSkyDrawer.setAbsoluteStarScale(1.5);
+StelSkyDrawer.setRelativeStarScale(1.65);
+
+StarMgr.setFontSize(20);
+StarMgr.setLabelsAmount(3);
+
+ConstellationMgr.setFlagLines(true);
+ConstellationMgr.setFlagLabels(true);
+ConstellationMgr.setArtIntensity(0.1);
+ConstellationMgr.setFlagArt(true);
+ConstellationMgr.setFlagBoundaries(false);
+ConstellationMgr.setConstellationLineThickness(3);
+ConstellationMgr.setFontSize(18);
+
+LandscapeMgr.setFlagAtmosphere(true);
+
+StelMovementMgr.zoomTo(param_fov, 0);
+core.wait(0.5);
+
+makeVideo(param_date, "frame_", param_title, param_timespan, param_long, param_lat, param_alt, param_az)
+core.setGuiVisible(true);
+core.quitStellarium();
+
+             
