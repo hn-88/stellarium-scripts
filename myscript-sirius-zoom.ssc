@@ -8,9 +8,13 @@
 // uncheck all the labels in Information and Extras tabs
 // Ctrl-T to make the on-screen controls vanish.
 // Sky and viewing options (F4)
+// Sky tab
 // defaults look good in 4K.
 // stars Absolute scale 1.0, relative 0.5
 // limit magnitude 6.
+// Projection Fisheye,
+// 180 FOV would be the natural setting.
+// SSO tab, 4x for Moon, Sun etc looks good.
 
 for (i=195; i>30; i--) {
 StelMovementMgr.zoomTo(i, 0.01);
