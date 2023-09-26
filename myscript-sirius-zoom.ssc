@@ -1,0 +1,10 @@
+for (i=195; i>30; i--) {
+StelMovementMgr.zoomTo(i, 0.01);
+
+core.wait(0.01); // Why, oh why is this necessary?
+
+// Take screenshot
+//
+core.screenshot(   'sirius-zoom'   )  ;
+}
+
