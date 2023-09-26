@@ -1,3 +1,17 @@
+// Before running the script, set up the
+// save directory with (F2) Configuration Window
+// Tools tab -> Screenshots - 
+// directory, format and custom size.
+// For fulldome sky views, can choose
+// Disc Viewport in (F2) -> Tools tab
+// Startup date and time in Time tab
+// uncheck all the labels in Information and Extras tabs
+// Ctrl-T to make the on-screen controls vanish.
+// Sky and viewing options (F4)
+// defaults look good in 4K.
+// stars Absolute scale 1.0, relative 0.5
+// limit magnitude 6.
+
 for (i=195; i>30; i--) {
 StelMovementMgr.zoomTo(i, 0.01);
 
