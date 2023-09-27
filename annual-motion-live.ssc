@@ -1,0 +1,11 @@
+//
+// Author: Hari Nandakumar
+// First commit: 27 Sep 2023
+// License: Public domain
+// Name: annual motion live
+// Description: shows annual motion at the given location - 
+// the sky as seen at midnight local time, pausing between frames for 0.1 second,
+// from July 01 2000 to July 01 2001
+//
+// Set the location
+core.setObserverLocation("Bristol, UnitedKingdom")
