@@ -4,8 +4,18 @@
 // License: Public domain
 // Name: annual motion live
 // Description: shows annual motion at the given location - 
-// the sky as seen at midnight local time, pausing between frames for 0.1 second,
+// the sky as seen at midnight UTC, pausing between frames for 0.1 second,
 // from July 01 2000 to July 01 2001
 //
-// Set the location
-core.setObserverLocation("Bristol, UnitedKingdom")
+// Set the location if needed, also set direction of view using moveToAltAzi() if not set already.
+//core.setObserverLocation("Bristol, Northern Europe")
+core.setDate("2000-07-01T00:00:05","utc",true)  // use UTC time
+core.setTimeRate(0)  // do not advance time, pause at the specified time
+
+for (i=0; i<366; i++)
+{
+core.wait(0.1) // increase this wait time to make the animation slower
+core.setDate("+ 24 hours solar")
+}
+// Done.
+ 
