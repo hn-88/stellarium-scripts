@@ -14,8 +14,8 @@ core.setTimeRate(0)  // do not advance time, pause at the specified time
 
 for (i=0; i<366; i++)
 {
-core.wait(0.1) // increase this wait time to make the animation slower
-core.setDate("+ 24 hours solar")
+core.wait(0.1); // increase this wait time to make the animation slower
+core.setDate("+ 24 hours solar");
 }
 // Done.
  
