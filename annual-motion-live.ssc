@@ -9,8 +9,8 @@
 //
 // Set the location if needed, also set direction of view using moveToAltAzi() if not set already.
 //core.setObserverLocation("Bristol, Northern Europe")
-core.setDate("2000-07-01T00:00:05","utc",true)  // use UTC time
-core.setTimeRate(0)  // do not advance time, pause at the specified time
+core.setDate("2000-07-01T00:00:05","utc",true);  // use UTC time
+core.setTimeRate(0);  // do not advance time, pause at the specified time
 
 for (i=0; i<366; i++)
 {
