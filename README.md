@@ -1,4 +1,9 @@
 # stellarium-scripts
 scripts to make fulldome videos as frame sequence captures in stellarium
 
-Link - Useful discussion at https://github.com/Stellarium/stellarium/discussions/3424
+Links - 
+
+1. Useful discussion for general syntax and howtos at https://github.com/Stellarium/stellarium/discussions/3424
+2. Flybys with Stellarium - https://github.com/Stellarium/stellarium/discussions/2178
+
+   
