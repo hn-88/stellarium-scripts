@@ -1,0 +1,397 @@
+// Name: Christmas Star
+// License: Public Domain
+// Author: Alexander V. Wolf + Harry + Mario
+// For Stellarium version: 0.19.3
+// Description: Possible explanation of the Christmas Star over Bethlehem in August 03 BC
+
+
+
+// DEFINE THE PAUSE-CONTINUE FUNCTION
+
+function waitNextStep()
+{
+    // next step button: ]
+    var q = 1;
+    var jd = core.getJDay();
+    while (q==1)
+    {
+        var jdn = core.getJDay();
+        if (jdn-jd>5)
+        {
+            q=0;
+        } else {
+            jd = jdn;
+        }
+        core.wait(0.01);
+    }
+    core.setJDay(jd);
+}
+
+
+
+
+// DEFINE THE SHOW TEXT FUNCTION WITH COLOUR AND POSITION ON THE SCREEN
+
+
+function showText(text, time)
+{
+    var labelID = LabelMgr.labelHorizon(text, 160, 10, true, 30, "#ff0000");
+    core.wait(time); // You could also use this parameter to define how long the text will be shown
+    return labelID; // Return the label ID for later reference
+}
+
+
+
+
+
+
+// DEFINE AN ARRAY OF CONSTELLATIONS THAT CAN BE REFERRED TO AS A GROUP LATER
+
+var zodiac = new Array("Leo", "Cancer", "Gemini", "Taurus", "Aries", "Pisces", "Aquarius");
+
+
+
+
+// DEFINE SPHERICAL MIRROR AND OTHER PARAMETERS
+
+core.setProjectionMode("ProjectionFisheye");
+core.wait(0.1); // Wait for 0.1 seconds
+
+// core.setDiskViewport(true); // not sure what this is and why it has been hashed out. Enabling it appears to make no visible difference
+
+core.setFlagGravityLabels(true);
+core.setSphericMirror(true);
+core.wait(0.1);
+core.clear("natural");
+
+//StelMovementMgr.setFlagLockEquPos(true); // this sounds like it's meant to show proper annual motion [see Notes], yet causes havoc when enabled
+
+StelMovementMgr.zoomTo(180, 0.1);
+StelMovementMgr.lookZenith();
+core.wait(0.1);
+
+
+// core.setGuiVisible(true); // this enables the control panel bar at the top of the screen
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  STEP 1 - MOVE (RAPIDLY) FROM CURRENT TIME TO BETHLEHEM (31.7° N / 35.2° E) BEFORE SUNRISE ON 12 AUGUST 3 BC
+//
+
+
+// SET THE NUMBER OD STEPS IN THE TRANSITION
+
+var stepCount = 25;
+
+
+
+// OBTAIN THE INITIAL DATE AS A JULIAN DATE NUMBER
+
+var initialJDay = core.getJDay();
+
+
+
+// SET THE FINAL DATE AS THE JULIAN DATE NUMBER BEFORE SUNRISE ON 12 AUGUST 3BC 
+
+var finalJDay = 1720551.59164;
+
+
+
+// CALCULATE THE INCREMENT FOR EACH STEP
+
+var dateStep = (finalJDay - initialJDay) / stepCount;
+var latStep = (31.7 - 51.46) / stepCount;
+var longStep = (35.2 + 2.6) / stepCount;
+
+
+// CALCULATE THE CURRENT DATE, LATITUDE & LONGITUDE FOR THIS STEP
+
+for (var i = 0; i <= stepCount; i++) {
+
+var currentJDay = initialJDay + dateStep * i;
+var currentLat = 51.46 + latStep * i;
+var currentLong = -2.6 + longStep * i;  // initial longitude is negative (west)
+
+
+// SET THE CURRENT DATE, LATITUDE AND LONGITUDE
+
+core.setJDay(currentJDay);
+core.setObserverLocation(currentLong, currentLat, 1, 5, "Transition Location", "Earth");
+core.wait(0.05);  // Adjust this value to control the speed of the transition
+}
+
+
+// SHOW LOCATION, DATE AND CARDINAL POINTS
+
+
+var bethlehemLabelID = showText("Bethlehem 12 August 3 BC", 1);
+
+
+
+LandscapeMgr.setFlagCardinalsPoints(true);
+
+
+waitNextStep();
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  STEP 2 - PLANET LABELS APPEAR, ZODIAC CONSTELLATIONS APPEAR, STAR LABELS APPEAR BRIEFLY AND FADE.
+//
+
+
+// SHOW PLANET LABELS
+
+SolarSystem.setFlagLabels(true);
+
+
+
+// WAIT 10 SECONDS
+
+// core.wait(10);  
+
+
+
+// SHOW ZODIAC CONSTELLATION ARRAY
+
+ConstellationMgr.deselectConstellations();
+ConstellationMgr.setFlagArt(true);
+ConstellationMgr.setFlagBoundaries(false);
+ConstellationMgr.setFlagLines(false);
+ConstellationMgr.setFlagLabels(false);
+ConstellationMgr.setFlagIsolateSelected(true);
+
+
+
+// HAVE CONSTELLATIONS APPEAR IN REVERSE FROM AQUARIUS TO LEO
+
+for(i = zodiac.length - 1; i >= 0; i--)
+{
+    core.selectConstellationByName(zodiac[i]);
+    core.wait(1.5);
+}
+
+
+
+// WAIT 10 SECONDS
+
+core.wait(2);  
+
+
+
+// SHOW STAR NAMES (UP TO MAGNITUDE 1.4, REGULUS) FOR 5 SECONDS AND FADE
+
+StarMgr.setLabelsAmount(1.4);
+StarMgr.setFlagLabels(true);
+core.wait(5); 
+StarMgr.setFlagLabels(false);
+
+
+
+waitNextStep();
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  STEP 3 - ALL CONSTELLATIONS FADE, ANNUAL MOTION FORWARD UNTIL MORNING OF 12 FEB 2 BC.
+//
+
+
+
+
+
+// DELETE THE PERSISTENT LABEL FROM STEP 1 BEFORE STARTING THE LOOP
+
+LabelMgr.deleteLabel(bethlehemLabelID);
+
+
+
+
+// FADE CONSTELLATIONS
+
+ConstellationMgr.setFlagArt(false);
+StelMovementMgr.lookZenith(); // does this cause the jump? why do we need this?
+core.wait(0.1);
+
+
+
+// waitNextStep();
+
+
+
+// TURN ON CONSTELLATION LINES
+
+ConstellationMgr.setFlagLines(true);
+
+
+
+// waitNextStep();
+
+
+
+// TURN ON TRAILS ONLY FOR JUPITER
+
+SolarSystem.setFlagIsolatedTrails(true);
+SolarSystem.setFlagTrails(true); 
+core.selectObjectByName("Jupiter");
+
+
+
+waitNextStep();
+
+
+
+// ANNUAL MOTION TO 01 JUNE 2 BC
+
+function formatDate(dateString) {
+    var idx = 0;
+    if (dateString.slice(0, 1)=='-') {
+          idx = 1;
+    }
+    var dateParts = dateString.split("-");
+    var year = parseInt(dateParts[idx]);
+    if (idx==1) { year *= -1; }
+    var month = parseInt(dateParts[idx+1]);
+    var day = parseInt(dateParts[idx+2]);
+
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var formattedMonth = monthNames[month - 1];
+
+    if (year <= 0) {
+        year = Math.abs(year) + 1 + " BC";  // Convert negative years to BC, adding 1 because there is no year 0
+    }
+
+    return day + " " + formattedMonth + " " + year;
+}
+
+
+
+
+// Existing code to create the initial date label
+var labelID = LabelMgr.labelScreen("Bethlehem 12 August 3 BC", 160, 10, true, 30, "#ff0000");
+
+
+
+
+
+
+// Loop to increment the date by two days at a time until "01 June 2 BC"
+
+var targetJDay = 1720843.58976; // Julian Day for 01 June 2 BC
+
+while (core.getJDay() < targetJDay) {
+    core.setDate("+2 days"); // Increment the date by two days
+    var currentDateTime = core.getDate("utc").toString();
+    var depth = 10;
+    if (currentDateTime.slice(0, 1)=='-') {
+          depth = 11;
+    }
+    var currentDate = core.getDate("utc").toString().slice(0, depth); // Get the current date as a string in the format "YYYY-MM-DD"
+    var formattedDate = formatDate(currentDate); // Format the date to the desired format "DD Month YYYY BC/AD"
+    LabelMgr.deleteLabel(labelID); // Delete the old label
+    labelID = LabelMgr.labelHorizon(formattedDate, 160, 10, true, 30, "#ff0000"); // Create a new label with the updated date and store its ID
+    core.wait(1); // Wait for a short duration before proceeding to the next iteration
+}
+
+
+
+waitNextStep();
+
+
+
+
+
+
+
+
+
+
+////////////// OLD STUFF BELOW THIS LINE & UNFINISHED STEP 4 ///////////////
+
+
+
+
+// real annual motion
+for (i=0; i<323; i++)
+{
+    core.setDate("+1 day");
+    var currentDate = core.getDate("utc").toString().slice(0,10); // Get the current date as a string in the format "YYYY-MM-DD"
+    var formattedDate = formatDate(currentDate); // Format the date to the desired format "DD Month YYYY BC/AD"
+    LabelMgr.setLabelShow(labelID, false); // Hide the old label
+    labelID = LabelMgr.labelScreen("Bethlehem " + formattedDate, 160, 10, true, 30, "#ff0000"); // Create a new label with the updated date and store its ID
+    LabelMgr.setLabelShow(labelID, true); // Show the new label
+    core.wait(.25);  // Wait for a slightly longer duration before proceeding to the next iteration, as per the example code
+}
+
+
+
+
+
+
+core.setTimeRate(1);
+core.waitFor("-0001-02-12T04:35:00", "local");
+core.setTimeRate(0.1);
+
+
+
+// Disable trails for planets
+SolarSystem.setFlagTrails(false);
+
+
+
+// showText("Date: " + core.getDate("local"), 5);
+
+
+
+
+
+waitNextStep();
+
+
+
+
+
+//
+// STEP 4 - diurnal motion forward to evening of 01 June 2 BC
+//
+
+
+// real diurnal motion
+for (i=0; i<25; i++)
+{
+    core.setDate("+30 minutes");
+    core.wait(0.15);
+}
+showText("Date: " + core.getDate("local"), 5);
+
+waitNextStep();
+
+//
+// - annual motion forward until 17 June 2 BC
+//
+
+LabelMgr.deleteAllLabels();
+for (i=0; i<16; i++)
+{
+    core.setDate("+1 day");
+    core.wait(0.15);
+}
+showText("Date: " + core.getDate("local"), 5);
+
+waitNextStep();
+
+//
+//  - all constellations appear, slow diurnal motion
+//
+
+LabelMgr.deleteAllLabels();
+ConstellationMgr.setFlagIsolateSelected(false);
+ConstellationMgr.selectAllConstellations();
+core.wait(0.1);
+core.setTimeRate(200);
+//core.setGuiVisible(true);
