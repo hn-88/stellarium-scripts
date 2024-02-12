@@ -1,0 +1,170 @@
+//
+// Name: Christmas Star
+// License: Public Domain
+// Author: Alexander V. Wolf
+// Version: 0.19.3-3
+// Description: Look at Christmas Star in Bethlehem
+
+// for version 0.19.3
+
+function waitNextStep()
+{
+    // next step button: ]
+    var q = 1;
+    var jd = core.getJDay();
+    while (q==1)
+    {
+        var jdn = core.getJDay();
+        if (jdn-jd>5)
+        {
+            q=0;
+        } else {
+            jd = jdn;
+        }
+        core.wait(0.01);
+    }
+    core.setJDay(jd);
+}
+
+function showText(text, time)
+{
+    LabelMgr.labelHorizon(text, 0, 45, true, 30, "#ff0000");
+    core.wait(time);
+}
+
+var zodiac = new Array("Leo", "Cancer", "Gemini", "Taurus", "Aries", "Pisces", "Aquarius");
+
+core.setProjectionMode("ProjectionFisheye");
+core.wait(0.1);
+//core.setDiskViewport(true);
+core.setFlagGravityLabels(true);
+core.setSphericMirror(true);
+core.wait(0.1);
+core.setDate("-0002-08-12T02:20:00", "utc");
+core.wait(0.1);
+core.clear("natural");
+//StelMovementMgr.setFlagLockEquPos(true);
+StelMovementMgr.zoomTo(180, 0.1);
+StelMovementMgr.lookZenith();
+core.wait(0.1);
+//core.setGuiVisible(false);
+
+//
+//  - move from present time & location to Bethlehem (31.7° N / 35.2° E)  before sunrise on 12 August 3 BC
+//
+
+showText("Go to Bethlehem (Western Asia) before sunrise", 1);
+
+core.setObserverLocation(35.2, 31.7, 1, 5, "Bethlehem, Western Asia", "Earth");
+core.wait(5);
+
+//waitNextStep();
+
+//
+// - zodiac constellations appear, with planet labels
+//
+
+LabelMgr.deleteAllLabels();
+SolarSystem.setFlagLabels(true);
+
+ConstellationMgr.deselectConstellations();
+ConstellationMgr.setFlagArt(true);
+ConstellationMgr.setFlagBoundaries(true);
+ConstellationMgr.setFlagLines(true);
+ConstellationMgr.setFlagLabels(true);
+ConstellationMgr.setFlagIsolateSelected(true);
+
+for(i=0; i<zodiac.length; i++)
+{
+	core.selectConstellationByName(zodiac[i]);
+	core.wait(0.1);
+}
+
+//waitNextStep();
+
+//
+// - diurnal motion forward a little, for a better view of Jupiter and Leo;  calendar date appears at the front
+//
+
+core.setTimeRate(200);
+core.wait(5);
+core.setTimeRate(1);
+core.wait(0.1);
+
+showText("Date: " + core.getDate("local"), 1);
+
+core.selectObjectByName("Jupiter", false);
+StelMovementMgr.lookZenith();
+//StelMovementMgr.setFlagTracking(true);
+
+// good for flat screens
+//StelMovementMgr.zoomTo(12, 5);
+//core.wait(7);
+//StelMovementMgr.zoomTo(180, 5);
+
+core.wait(5);
+
+//waitNextStep();
+
+//
+//  - annual motion forward until morning of 01 June 2 BC, all constellations fade except Leo
+//
+
+LabelMgr.deleteAllLabels();
+ConstellationMgr.deselectConstellations();
+core.selectConstellationByName("Leo");
+StelMovementMgr.lookZenith();
+core.wait(0.1);
+
+// real annual motion
+for (i=0; i<323; i++)
+{
+    core.setDate("+1 day");
+    core.wait(0.1);
+}
+core.setTimeRate(500);
+core.waitFor("-0001-07-01T07:20:00", "local");
+core.setTimeRate(1);
+showText("Date: " + core.getDate("local"), 5);
+LabelMgr.deleteAllLabels();
+
+//waitNextStep();
+
+//
+// - diurnal motion forward to evening of 01 June 2 BC
+//
+
+// real diurnal motion
+for (i=0; i<25; i++)
+{
+    core.setDate("+30 minutes");
+    core.wait(0.15);
+}
+showText("Date: " + core.getDate("local"), 5);
+
+//waitNextStep();
+
+//
+// - annual motion forward until 17 June 2 BC
+//
+
+LabelMgr.deleteAllLabels();
+for (i=0; i<16; i++)
+{
+    core.setDate("+1 day");
+    core.wait(0.15);
+}
+showText("Date: " + core.getDate("local"), 5);
+
+//waitNextStep();
+
+//
+//  - all constellations appear, slow diurnal motion
+//
+
+LabelMgr.deleteAllLabels();
+ConstellationMgr.setFlagIsolateSelected(false);
+ConstellationMgr.selectAllConstellations();
+core.wait(0.1);
+core.setTimeRate(200);
+//core.setGuiVisible(true);
